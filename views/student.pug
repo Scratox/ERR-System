@@ -1,0 +1,105 @@
+extends layout
+
+block content
+  doctype html
+  html(lang='en')
+    head
+      meta(charset='UTF-8')
+      meta(name='viewport' content='width=device-width, initial-scale=1.0')
+      title Exam Result Rectifier - Student Dashboard
+      style.
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+        }
+
+        header {
+          background-color: #f0f0f0;
+          padding: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        nav ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        nav li {
+          display: inline-block;
+          margin-right: 20px;
+        }
+
+        a {
+          text-decoration: none;
+          color: #333;
+        }
+
+        main {
+          text-align: center;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+
+        th, td {
+          border: 1px solid #ddd;
+          padding: 10px;
+          text-align: left;
+        }
+
+        th {
+          background-color: #f2f2f2;
+        }
+
+        label {
+          margin-bottom: 8px;
+          display: block;
+        }
+
+        input {
+          padding: 8px;
+          margin-bottom: 16px;
+          box-sizing: border-box;
+        }
+
+        button {
+          background-color: #4caf50;
+          color: white;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+    body
+      main
+        h2 Submit Issue
+        form(action='/submit-issue' method='post')
+          //- Department Radio Buttons Middleware
+          label(for='department') Departments:
+          | !{getDepartmentsRadio}
+
+          
+          //- Modules Dropdown Middleware
+          label(for='modules') Modules:
+          | !{getModulesDropdown}
+
+          
+          //- Teachers Dropdown Middleware
+          label(for='teachers') Teachers:
+          | !{getTeachersDropdown}
+
+          br
+
+          label(for='description') Description:
+          textarea(name='description' rows='4' cols='50', required)
+
+          br
+          input(type='submit' value='Submit')

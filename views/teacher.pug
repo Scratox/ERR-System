@@ -1,0 +1,88 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Exam Result Rectifier - Teacher Dashboard
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #f0f0f0;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      nav li {
+        display: inline-block;
+        margin-right: 20px;
+      }
+
+      a {
+        text-decoration: none;
+        color: #333;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+    header
+      h1 Exam Result Rectifier
+      nav
+        ul
+          li
+            a(href='/Teacher') Dashboard
+          li
+            a(href='/login') Logout
+    block content
+
+  body
+    header
+      h2 Teachers Dashboard
+      n
+    - if (result && result.length > 0)
+      h2 Open Issues
+      table
+        tr
+          th Submission ID
+          th Student ID
+          th Problem Description
+          th Submission Date
+          th Status
+        each row in result
+          tr
+            td= row.SubmissionID
+            td= row.StudentID
+            td= row.ProblemDescription
+            td= row.SubmissionDate
+            td= row.Status
+    - else
+      | No data available.
+      if (error)
+        p= error
