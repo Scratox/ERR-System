@@ -5,6 +5,9 @@ const db = mysql.createConnection({
   user: 'root',
   password: '',
   database: 'examination_rectifier',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 db.connect((err) => {

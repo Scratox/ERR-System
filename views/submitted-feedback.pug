@@ -1,0 +1,96 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title View Feedback
+    style.
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      h2 {
+        color: #4caf50;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      li {
+        margin-bottom: 15px;
+      }
+
+      strong {
+        font-weight: bold;
+        color: #333;
+      }
+
+      p {
+        color: #888;
+      }
+
+      form {
+        margin-top: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+  body
+    .container
+      h1 View Feedback
+
+      // Add a form to input the studentID
+      form(action="/submitted-feedback" method="get")
+        label(for="studentID") Enter Student ID:
+        input(type="text" id="studentID" name="studentID" required)
+        button(type="submit") View Feedback
+
+      if feedbackData && feedbackData.length > 0
+        h2 Feedback Received
+        ul
+          each feedback in feedbackData
+            li
+              strong Teacher ID: #{feedback.TeacherID}
+              br
+              strong Feedback: #{feedback.FeedbackText}
+              br
+              strong Feedback Date: #{feedback.FeedbackDate}
+              br
+              strong Exam ID: #{feedback.ExamID}
+      else
+        p No feedback available

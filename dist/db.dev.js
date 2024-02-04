@@ -6,7 +6,10 @@ var db = mysql.createConnection({
   host: '127.0.0.1',
   user: 'root',
   password: '',
-  database: 'examination_rectifier'
+  database: 'examination_rectifier',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 db.connect(function (err) {
   if (err) {

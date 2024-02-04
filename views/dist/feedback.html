@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      h1 {
+        color: #333;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      
+      input[type="text"],
+      input[type="date"],
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+      }
+      
+      button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+    <body>
+      <div class="container">
+        <h1>Submit Feedback</h1>
+        <form action="/feedback" method="post">
+          <label for="StudentID">Student ID:</label>
+          <input type="text" id="StudentID" name="StudentID" required><br>
+          <label for="TeacherID">Teacher ID:</label>
+          <input type="text" id="TeacherID" name="TeacherID" required><br>
+          <label for="FeedbackText">Feedback:</label>
+          <textarea id="FeedbackText" name="FeedbackText" rows="4" required></textarea><br>
+          <label for="FeedbackDate">Feedback Date:</label>
+          <input type="date" id="FeedbackDate" name="FeedbackDate" required><br>
+          <label for="ExamID">Exam ID:</label>
+          <input type="text" id="ExamID" name="ExamID" required><br>
+          <button type="submit">Submit Feedback</button>
+        </form>
+      </div>
+    </body>
+  </head>
+</html>

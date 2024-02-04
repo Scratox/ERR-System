@@ -6,6 +6,8 @@ var bodyParser = require('body-parser');
 
 var db = require('./db');
 
+var mysql = require('mysql2');
+
 var app = express();
 var PORT = process.env.PORT || 8888;
 app.use(express["static"]('public'));
@@ -13,7 +15,16 @@ app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
-})); // Middleware to get departments radio buttons
+}));
+var pool = mysql.createPool({
+  host: '127.0.0.1',
+  user: 'root',
+  password: '',
+  database: 'examination_rectifier',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+}); // Middleware to get departments radio buttons
 
 var getDepartmentsRadio = function getDepartmentsRadio(req, res, next) {
   var sql = 'SELECT DepartmentName FROM department';
@@ -97,9 +108,9 @@ app.post('/login', function (req, res) {
       res.send('Invalid credentials');
     } else {
       // Redirect based on user role
-      if (authenticatedUser.role === 'Student') {
+      if (authenticatedUser.UserRole === 'Student') {
         res.redirect('/student');
-      } else if (authenticatedUser.role === 'Teacher') {
+      } else if (authenticatedUser.UserRole === 'Teacher') {
         res.redirect('/teacher');
       } else {
         res.send('Invalid user role');
@@ -116,6 +127,31 @@ app.get('/student', getDepartmentsRadio, getModulesDropdown, getTeachersDropdown
     getTeachersDropdown: res.locals.getTeachersDropdown
   };
   res.render('student', data);
+}); // Handle POST request to /submit-issue
+
+app.post('/submit-issue', function (req, res) {
+  var description = req.body.description; // Assuming you have Status value available
+
+  var status = 'Pending'; // You can set the initial status as needed
+  // Get the current date and time for SubmissionDate
+
+  var submissionDate = new Date().toISOString(); // Insert data into problemsubmissions table with only non-null values
+
+  var sql = "\n    INSERT INTO problemsubmissions (ProblemDescription, SubmissionDate, Status)\n    VALUES (?, ?, ?)\n  ";
+  var values = [description, submissionDate, status]; // Filter out null or undefined values
+
+  var nonNullValues = values.filter(function (value) {
+    return value !== null && value !== undefined;
+  });
+  db.query(sql, nonNullValues, function (err, result) {
+    if (err) {
+      console.error('Error inserting data into problemsubmissions table:', err);
+      res.status(500).send('Internal Server Error');
+    } else {
+      console.log('Data inserted successfully into problemsubmissions table');
+      res.send('Form submitted successfully');
+    }
+  });
 }); // Teacher dashboard
 
 app.get('/teacher', function (req, res) {
@@ -143,11 +179,56 @@ app.get('/login', function (req, res) {
 });
 app.get('/submit-issue', function (req, res) {
   res.render('student');
-}); // Error handling middleware
+});
+app.get('/feedback', function (req, res) {
+  res.render('feedback');
+});
+app.get('/submitted-feedback', function (req, res) {
+  res.render('submitted-feedback');
+});
+app.get('/home', function (req, res) {
+  res.render('home');
+}); //for submitting feedback
 
-app.use(function (err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
+app.post('/feedback', function (req, res) {
+  var _req$body2 = req.body,
+      StudentID = _req$body2.StudentID,
+      TeacherID = _req$body2.TeacherID,
+      FeedbackText = _req$body2.FeedbackText,
+      FeedbackDate = _req$body2.FeedbackDate,
+      ExamID = _req$body2.ExamID;
+  var sql = 'INSERT INTO feedback (StudentID, TeacherID, FeedbackText, FeedbackDate, ExamID) VALUES (?, ?, ?, ?, ?)';
+  var values = [StudentID, TeacherID, FeedbackText, FeedbackDate, ExamID];
+  pool.query(sql, values, function (err, result) {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    console.log('Feedback submitted successfully.');
+    res.redirect('/feedback');
+  });
+}); //for viewing feedback
+// Route to view feedback for a specific student
+
+app.get('/submitted-feedback/:studentID', function (req, res) {
+  var studentID = req.params.studentID; // Query to retrieve feedback based on StudentID
+
+  var sql = 'SELECT * FROM feedback WHERE StudentID = ?';
+  pool.query(sql, [studentID], function (err, result) {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    var feedbackData = result; // Render the view-feedback page with the retrieved feedback data
+
+    res.render('submitted-feedback', {
+      feedbackData: feedbackData
+    });
+  });
 });
 app.listen(PORT, function () {
   console.log("Server is running on http://localhost:".concat(PORT));

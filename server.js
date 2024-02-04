@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('./db');
-
+const mysql = require('mysql2');
 
 const app = express();
 const PORT = process.env.PORT || 8888;
@@ -10,6 +10,15 @@ app.use(express.static('public'));
 app.set('view engine', 'pug');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+const pool = mysql.createPool({
+  host: '127.0.0.1',
+  user: 'root',
+  password: '',
+  database: 'examination_rectifier',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
 
 // Middleware to get departments radio buttons
 const getDepartmentsRadio = (req, res, next) => {
@@ -181,11 +190,58 @@ app.get('/submit-issue', (req, res) => {
   res.render('student');
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
+app.get('/feedback', (req, res) => {
+  res.render('feedback');
 });
+app.get('/submitted-feedback', (req, res) => {
+  res.render('submitted-feedback');
+});
+
+app.get('/home', (req, res) => {
+  res.render('home');
+});
+//for submitting feedback
+app.post('/feedback', (req, res) => {
+  const { StudentID, TeacherID, FeedbackText, FeedbackDate, ExamID } = req.body;
+
+  const sql = 'INSERT INTO feedback (StudentID, TeacherID, FeedbackText, FeedbackDate, ExamID) VALUES (?, ?, ?, ?, ?)';
+  const values = [StudentID, TeacherID, FeedbackText, FeedbackDate, ExamID];
+
+  pool.query(sql, values, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    console.log('Feedback submitted successfully.');
+    res.redirect('/feedback');
+  });
+});
+
+//for viewing feedback
+
+// Route to view feedback for a specific student
+app.get('/submitted-feedback/:studentID', (req, res) => {
+  const studentID = req.params.studentID;
+
+  // Query to retrieve feedback based on StudentID
+  const sql = 'SELECT * FROM feedback WHERE StudentID = ?';
+  pool.query(sql, [studentID], (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    const feedbackData = result;
+
+    // Render the view-feedback page with the retrieved feedback data
+    res.render('submitted-feedback', { feedbackData });
+  });
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
