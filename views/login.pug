@@ -21,6 +21,8 @@ html(lang='en')
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         width: 300px;
+        display: flex;
+        flex-direction: column;
       }
       label {
         display: block;
@@ -43,5 +45,14 @@ html(lang='en')
       }
   body
     div
-      button(type='button', onclick="location.href='/student'") A Student
-      button(type='button', onclick="location.href='/teacher'") A Teacher 
+      form(action='/login', method='post')
+        label(for='username') Username:
+        input(type='text', name='username', required)
+        
+        label(for='password') Password:
+        input(type='password', name='password', required)
+
+        button(type='submit') Login
+
+      //- button(type='button', onclick="location.href='/student'") A Student
+      //- button(type='button', onclick="location.href='/teacher'") A Teacher

@@ -100,9 +100,9 @@ app.post('/login', (req, res) => {
       res.send('Invalid credentials');
     } else {
       // Redirect based on user role
-      if (authenticatedUser.role === 'Student') {
+      if (authenticatedUser.UserRole === 'Student') {
         res.redirect('/student');
-      } else if (authenticatedUser.role === 'Teacher') {
+      } else if (authenticatedUser.UserRole === 'Teacher') {
         res.redirect('/teacher');
       } else {
         res.send('Invalid user role');
